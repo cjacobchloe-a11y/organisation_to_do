@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>To-Do 🍂</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:24px 16px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,#fff3cf 0,transparent 30%),radial-gradient(circle at bottom right,#f6d6b8 0,transparent 28%),#f8f1e5;color:#4a2f20}
+.container{max-width:1200px;margin:auto}.nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+h1{font-size:34px;margin:0 0 5px;color:#71351f}.subtitle{color:#9a6848;margin-bottom:20px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}.nav button,.home-card,.add-btn,button{border:0;border-radius:10px;padding:10px 15px;cursor:pointer;font-weight:600}
+.nav button{background:#fffaf1;color:#71351f;border:1px solid #ead8bd}.nav-style{background:#fffaf1;color:#71351f;border:1px solid #ead8bd}.nav button.active,.add-btn{background:#b4532d;color:#fff}
+.page{display:none}.page.active{display:block}.card,.day,.quadrant,.pool{background:#fffaf1;border:1px solid #ead8bd;border-radius:16px;box-shadow:0 4px 12px #74442310}
+.card{padding:18px;margin-bottom:18px}
+.home{padding:40px;text-align:center}.home h2{color:#71351f}.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.home-card{text-align:left;background:#fffaf1;border:1px solid #ead8bd;padding:24px;transition:.2s}.home-card:hover{transform:translateY(-2px);background:#f7ead7}
+input,select{padding:9px 11px;border:1px solid #dec7a8;border-radius:9px;background:#fffdf8;color:#5b3825}input[type=number]{width:80px}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.task-input{width:100%;margin-bottom:10px}.stats{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}.stat{padding:9px 13px;border:1px solid #ead8bd;background:#fffaf1;border-radius:10px;color:#80563b}.stat strong{color:#71351f}
+.matrix{display:grid;grid-template-columns:1fr 1fr;gap:14px}.quadrant{padding:15px;min-height:150px}.quadrant h2{font-size:16px;margin:0 0 5px}.desc{font-size:12px;color:#a77b5a;margin-bottom:10px}.q1{border-top:5px solid #b83a2d}.q2{border-top:5px solid #e58b28}.q3{border-top:5px solid #d6a629}.q4{border-top:5px solid #8b5a35}
+.task{display:flex;gap:8px;align-items:center;padding:9px;margin-top:7px;background:#f7ead7;border:1px solid #ead6ba;border-radius:9px}.task-name{flex:1;font-size:14px}.done{text-decoration:line-through;color:#a88f7b}.x{background:transparent;color:#b99a82;padding:3px 6px}
+.week-controls{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.week-grid{display:grid;grid-template-columns:repeat(7,minmax(190px,1fr));gap:10px;overflow-x:auto;padding-bottom:8px}.day{min-width:190px;padding:12px}.day.today{border:2px solid #b4532d}.day-head{border-bottom:1px solid #ead8bd;padding-bottom:8px;margin-bottom:8px}.day-name{font-weight:700;color:#603a26}.muted{font-size:12px;color:#a77b5a}.budget-ok{color:#62804e}.budget-over{color:#b83a2d;font-weight:700}.planned{padding:8px;background:#f7ead7;border:1px solid #ead6ba;border-radius:9px;margin:7px 0;cursor:grab}.planned.dragging{opacity:.45}.planned-top{display:flex;gap:6px;align-items:flex-start}.planned-name{flex:1;font-size:13px}.time-row{display:flex;gap:5px;align-items:center;margin-top:6px}.time-row input{width:65px;padding:5px}.remove{background:transparent;color:#b99a82;padding:2px 5px}.add-day{width:100%;background:#fdf6ea;color:#9a6848;border:1px dashed #d8b993;padding:7px}
+.timetable{overflow-x:auto}.timegrid{display:grid;grid-template-columns:55px repeat(7,minmax(190px,1fr));min-width:1385px;border:1px solid #ead8bd;border-radius:12px;overflow:hidden;background:#fffaf1}.timecell,.timehead{border-right:1px solid #ead8bd;border-bottom:1px solid #ead8bd;min-height:40px}.timehead{height:45px;padding:8px;text-align:center;font-weight:700;background:#f7ead7}.hour{padding:5px;font-size:11px;color:#a77b5a;text-align:right}.slot{position:relative;height:40px;background:linear-gradient(#ead8bd,#ead8bd) top/100% 1px no-repeat}.event{position:absolute;left:3px;right:3px;top:2px;background:#e8c79d;border:1px solid #c89d6b;border-radius:6px;padding:4px;font-size:11px;z-index:2;overflow:hidden}
+.pool{padding:15px;margin-bottom:15px}.pool-list{display:flex;gap:7px;flex-wrap:wrap}.pool-task{padding:8px 10px;background:#f7ead7;border:1px solid #ead6ba;border-radius:9px;cursor:grab;font-size:13px}.pool-task.q1-task{border-left:5px solid #b83a2d;background:#f9e8e5}.pool-task.q2-task{border-left:5px solid #e58b28;background:#fbefdf}.pool-task.q3-task{border-left:5px solid #d6a629;background:#fbf5dc}.pool-task.q4-task{border-left:5px solid #8b5a35;background:#f2e9e2}
+.modal-bg{display:none;position:fixed;inset:0;background:#4a2f2059;z-index:10;align-items:center;justify-content:center;padding:15px}.modal-bg.show{display:flex}.modal{background:#fffaf1;border-radius:16px;border:1px solid #ead8bd;padding:20px;width:min(560px,100%);max-height:85vh;overflow:auto}.modal-task{display:flex;gap:8px;padding:9px;margin:6px 0;background:#f7ead7;border-radius:8px;cursor:pointer}.modal-task div{flex:1}
+.rec-days{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.rec-days label{background:#f7ead7;padding:7px 9px;border-radius:8px}.footer{display:none;text-align:center;color:#a77b5a;font-size:13px;margin:20px 0 5px;padding:12px 10px;border-top:1px solid #ead8bd}
+.page.active~.footer{display:block}
+.class-legend{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;align-items:center}
+.legend-item{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.legend-dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+.legend-q1{background:#b83a2d}.legend-q2{background:#e58b28}.legend-q3{background:#d6a629}.legend-q4{background:#8b5a35}
+.planned.q1-task{border-left:5px solid #b83a2d;background:#f9e8e5}
+.planned.q2-task{border-left:5px solid #e58b28;background:#fbefdf}
+.planned.q3-task{border-left:5px solid #d6a629;background:#fbf5dc}
+.planned.q4-task{border-left:5px solid #8b5a35;background:#f2e9e2}
+@media(max-width:850px){.home-grid,.matrix{grid-template-columns:1fr}.week-grid{grid-template-columns:repeat(7,190px)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<style>
+  h1 {
+    text-align: center;
+  }
+</style>
+
+<h1>🍂 To-Do List 🍂</h1>
+<nav class="nav">
+<button id="navHome" onclick="show('home')">🏠︎ Home</button>
+<button id="navMatrix" onclick="show('matrix')">☑ Task Matrix</button>
+<button id="navWeek" onclick="show('week')">🗓 Plan This Week</button>
+<button id="navTable" onclick="show('table')">𝄜 Timetable</button>
+</nav>
+
+<section id="home" class="page">
+<div class="card home"><div style="font-size:48px"></div><h2>What do you want to do today?</h2>
+<div class="home-card" onclick="show('matrix')"><div style="font-size:30px">⇄</div><h3>Sort My Tasks</h3><p>Use the four urgency/importance classes to decide what deserves attention first.</p></div>
+<div class="home-card" onclick="show('week')"><div style="font-size:30px">🗓</div><h3>Plan This Week</h3><p>Choose tasks for each day, set estimated durations and daily time budgets, and drag tasks between days.</p></div>
+<div class="home-card" onclick="show('table')"><div style="font-size:30px">𝄜</div><h3>Visual Timetable</h3><p>See your planned tasks in a time-grid so you can spot crowded days and open time.</p></div>
+<div class="home-card" onclick="openRecurring()"><div style="font-size:30px">⟲</div><h3>Recurring Tasks</h3><p>Create tasks that automatically appear on selected weekdays every week.</p></div>
+</div>
+</section>
+
+<section id="matrix" class="page">
+<div class="card">
+<input id="taskInput" class="task-input" placeholder="Task ✏️" onkeydown="if(event.key==='Enter')addTask()">
+<div class="row">
+<select id="urgency"><option value="urgent">Urgent</option><option value="not-urgent">Not Urgent</option></select>
+<select id="importance"><option value="important">Important</option><option value="not-important">Not Important</option></select>
+<button class="add-btn" onclick="addTask()">Add Task</button>
+<button class="add-btn" onclick="openRecurring()">⟲ Recurring Task</button>
+</div>
+</div>
+<div class="stats"><div class="stat">🍂 Total: <strong id="total">0</strong></div><div class="stat">⭐ Completed: <strong id="completed">0</strong></div><div class="stat">🌰 Remaining: <strong id="remaining">0</strong></div></div>
+<div class="matrix">
+<div class="quadrant q1"><h2>Class 1: Urgent, Important</h2><div class="desc">Do these first</div><div id="q1"></div></div>
+<div class="quadrant q2"><h2>Class 2: Urgent, Not Important</h2><div class="desc">Deal with these quickly</div><div id="q2"></div></div>
+<div class="quadrant q3"><h2>Class 3: Not Urgent, Important</h2><div class="desc">Schedule these for later</div><div id="q3"></div></div>
+<div class="quadrant q4"><h2>Class 4: Not Urgent, Not Important</h2><div class="desc">Do these when you have a little time</div><div id="q4"></div></div>
+</div>
+</section>
+
+<section id="week" class="page">
+<div class="card">
+<div class="week-controls"><div><h2 style="margin:0;color:#71351f">This Week</h2><div class="muted" id="weekRange"></div></div><button class="nav-style" onclick="applyRecurring()">⟲ Apply Recurring Tasks</button></div>
+<div class="stats"><div class="stat">No. of Planned Tasks: <strong id="plannedCount">0</strong></div><div class="stat"> Total Time: <strong id="plannedTotal">0m</strong></div></div>
+</div>
+<div class="pool"><strong>Task pool — drag a task onto a day</strong><div class="muted" style="margin:5px 0 10px">Or use “+ Add task” in a day.</div><div id="poolList" class="pool-list"></div></div>
+<div id="weekGrid" class="week-grid"></div>
+</section>
+
+<section id="table" class="page">
+<!-- <div class="card"><h2 style="margin:0;color:#71351f"> Visual Timetable</h2><p class="muted">Each planned task starts at the next available hour based on its order. Use the weekly planner to change durations and order.</p></div> -->
+<div class="card timetable"><div id="timegrid" class="timegrid"></div></div>
+</section>
+
+<div id="classLegend" class="footer">
+  <div class="class-legend" aria-label="Task class colour legend">
+    <span class="legend-item"><span class="legend-dot legend-q1"></span>Class 1: Urgent, Important</span>
+    <span class="legend-item"><span class="legend-dot legend-q2"></span>Class 2: Urgent, Not Important</span>
+    <span class="legend-item"><span class="legend-dot legend-q3"></span>Class 3: Not Urgent, Important</span>
+    <span class="legend-item"><span class="legend-dot legend-q4"></span>Class 4: Not Urgent, Not Important</span>
+  </div>
+</div>
+</div>
+
+<div id="modalBg" class="modal-bg" onclick="if(event.target===this)closeModal()">
+<div class="modal"><div id="modalContent"></div></div>
+</div>
+
+<script>
+const KEY="notionTasks", PLANKEY="weeklyTaskPlan", RECKEY="recurringTasks";
+let tasks=JSON.parse(localStorage.getItem(KEY)||"[]");
+let plan=JSON.parse(localStorage.getItem(PLANKEY)||"{}");
+let recurring=JSON.parse(localStorage.getItem(RECKEY)||"[]");
+let selectedDay=null;
+
+function save(){localStorage.setItem(KEY,JSON.stringify(tasks));localStorage.setItem(PLANKEY,JSON.stringify(plan));localStorage.setItem(RECKEY,JSON.stringify(recurring))}
+function show(id){
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+ const map={home:"navHome",matrix:"navMatrix",week:"navWeek",table:"navTable"};document.getElementById(map[id]).classList.add("active");
+ document.getElementById("classLegend").style.display=id==="home"?"none":"block";
+ if(id==="matrix")renderMatrix();if(id==="week")renderWeek();if(id==="table")renderTable();window.scrollTo({top:0,behavior:"smooth"});
+}
+function addTask(name=null,urg=null,imp=null,rec=null){
+ const input=document.getElementById("taskInput");
+ const taskName=(name??input.value).trim();if(!taskName)return;
+ const task={id:Date.now()+Math.random(),name:taskName,urgency:urg??document.getElementById("urgency").value,importance:imp??document.getElementById("importance").value,completed:false,recurring:rec||null};
+ tasks.push(task);save();if(input)input.value="";renderMatrix();renderWeek();
+}
+function del(id){
+ tasks=tasks.filter(t=>t.id!==id);
+ Object.keys(plan).forEach(k=>plan[k]=plan[k].filter(p=>p.taskId!==id));
+ save();renderMatrix();renderWeek();renderTable();
+}
+function toggle(id){const t=tasks.find(x=>x.id===id);if(t)t.completed=!t.completed;save();renderMatrix();renderWeek();renderTable()}
+function cat(t){return t.urgency+"-"+t.importance}
+function catName(t){return ({'urgent-important':"Class 1",'urgent-not-important':"Class 2",'not-urgent-important':"Class 3",'not-urgent-not-important':"Class 4"})[cat(t)]}
+function catClass(t){return ({'urgent-important':"q1-task",'urgent-not-important':"q2-task",'not-urgent-important':"q3-task",'not-urgent-not-important':"q4-task"})[cat(t)]}
+function taskEl(t){
+ const d=document.createElement("div");d.className="task";
+ const c=document.createElement("input");c.type="checkbox";c.checked=t.completed;c.onchange=()=>toggle(t.id);
+ const n=document.createElement("div");n.className="task-name"+(t.completed?" done":"");n.textContent=t.name;
+ if(t.recurring)n.textContent+=" ⟲";
+ const x=document.createElement("button");x.className="x";x.textContent="✕";x.onclick=()=>del(t.id);
+ d.append(c,n,x);return d;
+}
+function renderMatrix(){
+ const ids={'urgent-important':"q1",'urgent-not-important':"q2",'not-urgent-important':"q3",'not-urgent-not-important':"q4"};
+ Object.values(ids).forEach(id=>document.getElementById(id).innerHTML="");
+ tasks.forEach(t=>{const el=document.getElementById(ids[cat(t)]);if(el)el.appendChild(taskEl(t))});
+ Object.values(ids).forEach(id=>{const e=document.getElementById(id);if(!e.children.length)e.innerHTML='<div class="muted">No tasks here yet 🍂</div>'});
+ total.textContent=tasks.length;completed.textContent=tasks.filter(t=>t.completed).length;remaining.textContent=tasks.filter(t=>!t.completed).length;
+}
+function monday(d){d=new Date(d);let n=d.getDay();d.setDate(d.getDate()+(n===0?-6:1-n));d.setHours(0,0,0,0);return d}
+function key(d){return d.toISOString().slice(0,10)}
+function days(){let m=monday(new Date());return Array.from({length:7},(_,i)=>{let d=new Date(m);d.setDate(m.getDate()+i);return d})}
+function fmt(d){return d.toLocaleDateString(undefined,{day:"numeric",month:"short"})}
+function mins(v){v=Math.max(0,Number(v)||0);let h=Math.floor(v/60),m=v%60;return h?(m?`${h}h ${m}m`:`${h}h`):`${m}m`}
+function budget(d){return Number(localStorage.getItem("budget_"+key(d))||0)}
+function setBudget(d,v){localStorage.setItem("budget_"+key(d),String(Math.max(0,Number(v)||0)));renderWeek();renderTable()}
+function planned(day,taskId){return (plan[key(day)]||[]).some(p=>p.taskId===taskId)}
+function renderPool(){
+ const p=document.getElementById("poolList");p.innerHTML="";
+ tasks.filter(t=>!t.completed).forEach(t=>{const e=document.createElement("div");e.className="pool-task "+catClass(t);e.draggable=true;e.textContent=t.name;e.ondragstart=ev=>ev.dataTransfer.setData("text/plain",String(t.id));p.appendChild(e)});
+ if(!p.children.length)p.innerHTML='<span class="muted">No incomplete tasks available.</span>';
+}
+function renderWeek(){
+ const ds=days(),grid=document.getElementById("weekGrid");grid.innerHTML="";
+ weekRange.textContent=`${fmt(ds[0])} – ${fmt(ds[6])}`;
+ let pc=0,pt=0,today=key(new Date());
+ renderPool();
+ ds.forEach(d=>{
+  const k=key(d),arr=plan[k]||[],total=arr.reduce((s,p)=>s+Number(p.minutes||0),0),b=budget(d);pc+=arr.length;pt+=total;
+  const card=document.createElement("div");card.className="day"+(k===today?" today":"");card.ondragover=e=>e.preventDefault();card.ondrop=e=>{let id=Number(e.dataTransfer.getData("text/plain"));addToDay(k,id)};
+  const h=document.createElement("div");h.className="day-head";h.innerHTML=`<div class="day-name">${d.toLocaleDateString(undefined,{weekday:"long"})}</div><div class="muted">${fmt(d)}</div><div class="${b&&total>b?"budget-over":"budget-ok"}">⏱ ${mins(total)}${b?` / ${mins(b)}`:""}</div>`;
+  const br=document.createElement("div");br.className="row";br.style.marginBottom="8px";br.innerHTML=`<span class="muted">Daily budget:</span>`;
+  const bi=document.createElement("input");bi.type="number";bi.min="0";bi.step="15";bi.placeholder="min";bi.value=b||"";bi.title="Available minutes";bi.onchange=()=>setBudget(d,bi.value);br.appendChild(bi);h.appendChild(br);card.appendChild(h);
+  arr.forEach((p,idx)=>{
+   const t=tasks.find(x=>x.id===p.taskId);if(!t)return;
+   const e=document.createElement("div");e.className="planned "+catClass(t);e.draggable=true;e.ondragstart=ev=>{ev.dataTransfer.setData("text/plain",String(t.id));ev.dataTransfer.setData("from",k)};
+   const top=document.createElement("div");top.className="planned-top";
+   const c=document.createElement("input");c.type="checkbox";c.checked=t.completed;c.onclick=()=>toggle(t.id);
+   const n=document.createElement("div");n.className="planned-name"+(t.completed?" done":"");n.textContent=t.name;
+   const x=document.createElement("button");x.className="remove";x.textContent="✕";x.onclick=()=>removeFrom(k,t.id);
+   top.append(c,n,x);e.appendChild(top);
+   const tr=document.createElement("div");tr.className="time-row";tr.innerHTML="≈:";
+   const ti=document.createElement("input");ti.type="number";ti.min="1";ti.step="5";ti.value=p.minutes||30;ti.onchange=()=>setTime(k,t.id,ti.value);
+   tr.appendChild(ti);tr.insertAdjacentHTML("beforeend"," min");e.appendChild(tr);card.appendChild(e);
+  });
+  const add=document.createElement("button");add.className="add-day";add.textContent="+ Add task";add.onclick=()=>openPicker(k);card.appendChild(add);grid.appendChild(card);
+ });
+ plannedCount.textContent=pc;plannedTotal.textContent=mins(pt);
+}
+function addToDay(k,id){
+ if(!tasks.some(t=>t.id===id))return;
+ if(!plan[k])plan[k]=[];
+ if(!plan[k].some(p=>p.taskId===id)){plan[k].push({taskId:id,minutes:30});save();renderWeek();renderTable()}
+}
+function removeFrom(k,id){if(plan[k])plan[k]=plan[k].filter(p=>p.taskId!==id);save();renderWeek();renderTable()}
+function setTime(k,id,v){let p=(plan[k]||[]).find(x=>x.taskId===id);if(p)p.minutes=Math.max(1,Number(v)||1);save();renderWeek();renderTable()}
+function openPicker(k){
+ selectedDay=k;let arr=plan[k]||[],html=`<h2 style="color:#71351f">Choose a task</h2><p class="muted">Select a task for ${new Date(k+"T00:00:00").toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"})}</p>`;
+ let avail=tasks.filter(t=>!arr.some(p=>p.taskId===t.id));
+ if(!avail.length)html+='<p class="muted">All tasks are already planned for this day.</p>';
+ avail.forEach(t=>html+=`<div class="modal-task" onclick="addToDay('${k}',${t.id});closeModal()"><input type="checkbox" ${t.completed?"checked":""} onclick="event.stopPropagation();toggle(${t.id})"><div><b>${escapeHtml(t.name)}</b><div class="muted">${catName(t)}</div></div></div>`);
+ html+='<div style="text-align:right;margin-top:15px"><button onclick="closeModal()">Cancel</button></div>';openModal(html)
+}
+function openRecurring(){
+ let html=`<h2 style="color:#71351f">⟲ Recurring Task</h2>
+ <input id="recName" class="task-input" placeholder="Task name">
+ <div class="row"><select id="recUrg"><option value="urgent">Urgent</option><option value="not-urgent">Not Urgent</option></select><select id="recImp"><option value="important">Important</option><option value="not-important">Not Important</option></select></div>
+ <p class="muted">Repeat every week on:</p><div class="rec-days">${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((x,i)=>`<label><input type="checkbox" class="rd" value="${i}"> ${x}</label>`).join("")}</div>
+ <div class="row"><input id="recMin" type="number" min="1" step="5" value="30"><span class="muted">estimated minutes</span></div>
+ <div class="row" style="justify-content:flex-end;margin-top:15px"><button onclick="closeModal()">Cancel</button><button class="add-btn" onclick="createRecurring()">Create</button></div>
+ <hr><h3>Existing recurring tasks</h3><div id="recList"></div>`;
+ openModal(html);renderRecList()
+}
+function renderRecList(){
+ const el=document.getElementById("recList");if(!el)return;el.innerHTML="";
+ recurring.forEach(r=>{let d=document.createElement("div");d.className="task";d.innerHTML=`<div class="task-name"><b>${escapeHtml(r.name)}</b><br><span class="muted">${r.days.map(i=>["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][i]).join(", ")} • ${r.minutes} min</span></div>`;let x=document.createElement("button");x.className="x";x.textContent="✕";x.onclick=()=>{recurring=recurring.filter(a=>a.id!==r.id);save();renderRecList()};d.appendChild(x);el.appendChild(d)})
+}
+function createRecurring(){
+ let name=document.getElementById("recName").value.trim(),ds=[...document.querySelectorAll(".rd:checked")].map(x=>Number(x.value));if(!name||!ds.length){alert("Enter a task name and choose at least one day.");return}
+ recurring.push({id:Date.now()+Math.random(),name,urgency:document.getElementById("recUrg").value,importance:document.getElementById("recImp").value,days:ds,minutes:Number(document.getElementById("recMin").value)||30});save();closeModal();applyRecurring()
+}
+function applyRecurring(){
+ const ds=days();recurring.forEach(r=>ds.forEach((d,i)=>{if(r.days.includes(i)){let existing=tasks.find(t=>t.recurring===r.id&&t.name===r.name);if(!existing){existing={id:Date.now()+Math.random(),name:r.name,urgency:r.urgency,importance:r.importance,completed:false,recurring:r.id};tasks.push(existing)}addToDay(key(d),existing.id);let p=(plan[key(d)]||[]).find(x=>x.taskId===existing.id);if(p)p.minutes=r.minutes}}));save();renderMatrix();renderWeek();renderTable()
+}
+function openModal(html){document.getElementById("modalContent").innerHTML=html;document.getElementById("modalBg").classList.add("show")}
+function closeModal(){document.getElementById("modalBg").classList.remove("show");selectedDay=null}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+/* Timetable: 07:00–22:00, one-hour rows. Planned tasks are laid out sequentially. */
+function renderTable(){
+ const grid=document.getElementById("timegrid");if(!grid)return;grid.innerHTML="";
+ const ds=days(),hours=[];for(let h=7;h<=22;h++)hours.push(h);
+ const blank=document.createElement("div");blank.className="timehead";blank.textContent="";grid.appendChild(blank);
+ ds.forEach(d=>{let h=document.createElement("div");h.className="timehead";h.textContent=d.toLocaleDateString(undefined,{weekday:"short",day:"numeric"});grid.appendChild(h)});
+ hours.forEach(hour=>{
+  let lab=document.createElement("div");lab.className="timecell hour";lab.textContent=`${String(hour).padStart(2,"0")}:00`;grid.appendChild(lab);
+  ds.forEach(d=>{let cell=document.createElement("div");cell.className="timecell slot";cell.dataset.day=key(d);cell.dataset.hour=hour;grid.appendChild(cell)})
+ });
+ ds.forEach(d=>{
+  let cursor=7,arr=plan[key(d)]||[];
+  arr.forEach(p=>{let t=tasks.find(x=>x.id===p.taskId);if(!t)return;let duration=Number(p.minutes)||30,start=cursor;let startHour=Math.floor(start/60)+7, offset=start%60;let cell=[...grid.querySelectorAll(`.slot[data-day="${key(d)}"][data-hour="${startHour}"]`)][0];if(cell){let ev=document.createElement("div");ev.className="event";ev.style.top=(offset/60*40+2)+"px";ev.style.height=Math.max(24,duration/60*40-4)+"px";ev.textContent=`${t.name} • ${mins(duration)}`;cell.appendChild(ev)}cursor+=duration})
+ })
+}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+renderMatrix();renderWeek();renderTable();show("home");
+</script>
+</body>
+</html>
